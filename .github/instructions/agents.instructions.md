@@ -24,7 +24,7 @@ Every agent MUST include a YAML frontmatter block at the top of the file with th
 
 | Field           | Required | Description                                                                 |
 |-----------------|----------|-----------------------------------------------------------------------------|
-| `name`          | Yes      | Short, role-focused identifier (e.g., `plan`, `review`, `api-implementer`) |
+| `name`          | Yes      | Short, role-focused identifier in snake_case (e.g., `orchestrator`, `implementer_planner`, `api_implementer`) |
 | `description`   | Yes      | Single responsibility in 1–2 sentences                                      |
 | `tools`         | Yes      | Array of tools the agent is allowed to use                                  |
 | `argument-hint` | No       | Guidance on how to phrase user requests to this agent                       |
@@ -34,12 +34,15 @@ Every agent MUST include a YAML frontmatter block at the top of the file with th
 **Example:**
 ```yaml
 ---
-name: plan
-description: Creates implementation plans from user requirements without writing code.
-argument-hint: Describe the feature or task you want planned.
+name: orchestrator
+description: Coordinates multiple agents to complete complex multi-agent tasks.
+argument-hint: Describe the task you want completed.
 tools: ['search/codebase', 'runSubagent', 'todos']
 model: Auto (copilot)
-handoffs: ['implement', 'review']
+handoffs:
+  - label: planner
+    agent: orchestration_planner
+    prompt: "Plan multi-agent orchestration workflow"
 ---
 ```
 
@@ -141,8 +144,8 @@ A checklist the agent runs before responding:
 ## 5. Style Guidelines
 
 ### 5.1 Naming
-- `name`: lowercase, hyphenated (e.g., `api-implementer`, `code-review`).
-- File name: `<name>.agent.md` (e.g., `plan.agent.md`, `api-implementer.agent.md`).
+- `name`: snake_case (e.g., `api_implementer`, `code_reviewer`, `orchestrator`).
+- File name: `<name>.agent.md` (e.g., `orchestrator.agent.md`, `api_implementer.agent.md`).
 
 ### 5.2 Language
 - Direct and operational, not philosophical.
@@ -165,12 +168,15 @@ A checklist the agent runs before responding:
 
 ```chatagent
 ---
-name: <agent-name>
+name: <agent_name>
 description: <Single responsibility in 1-2 sentences.>
 argument-hint: <Optional: how to phrase requests.>
 tools: ['todos', '<other-tools>']
 model: Auto (copilot)
-handoffs: ['<agent-1>', '<agent-2>']
+handoffs:
+  - label: <handoff_label>
+    agent: <agent_name>
+    prompt: <handoff_prompt>
 ---
 
 You are a <ROLE NAME>.
