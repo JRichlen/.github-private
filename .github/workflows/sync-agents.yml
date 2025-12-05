@@ -1,0 +1,45 @@
+name: Sync Agents
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/agents/**'
+
+jobs:
+  sync-agents:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync agents folder
+        run: |
+          # Remove existing agents directory in root
+          rm -rf agents
+          
+          # Create new agents directory
+          mkdir -p agents
+          
+          # Copy all files from .github/agents to agents
+          cp -r .github/agents/* agents/
+          
+          # Ensure proper permissions
+          chmod -R 755 agents
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are changes to commit
+          if [ -n "$(git status --porcelain)" ]; then
+            git add agents/
+            git commit -m "chore: sync agents from .github/agents"
+            git push
+          else
+            echo "No changes to commit"
+          fi
