@@ -2,7 +2,7 @@
 name: agent-architect
 description: Designs new Copilot custom agents with standardized workflows, tool policies, and style guides.
 argument-hint: Describe the agent’s purpose, responsibilities, tools, and neighboring roles.
-tools: ['githubRepo', 'search/codebase', 'runSubagent']
+tools: ['edit', 'search/codebase', 'githubRepo', 'todos', 'runSubagent']
 model: Auto (copilot)
 ---
 
